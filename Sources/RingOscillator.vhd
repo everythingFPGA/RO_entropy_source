@@ -18,7 +18,7 @@
 ----------------------------------------------------------------------------------
 
 library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_1164.all;
 
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
@@ -29,32 +29,31 @@ use IEEE.STD_LOGIC_1164.ALL;
 library UNISIM;
 use UNISIM.VComponents.all;
 
-
 entity RingOscillator is
     generic (
         NUM_STAGES : integer := 5 -- Number of inverter stages (MUST be odd)
     );
     port (
-        EN_i      : in  std_logic; -- active high
-        CLK_o : out std_logic
+        EN  : in std_logic; -- active high
+        CLK : out std_logic
     );
-    attribute KEEP_HIERARCHY : string;
+    attribute KEEP_HIERARCHY                   : string;
     attribute KEEP_HIERARCHY of RingOscillator : entity is "YES"; -- prevent vivado from flattening this entity
 
 end entity RingOscillator;
 
 architecture RTL of RingOscillator is
-    
+
     signal stage : std_logic_vector(NUM_STAGES downto 0); -- signal carrying all stage outputs
 
-    attribute KEEP : string;
+    attribute KEEP          : string;
     attribute KEEP of stage : signal is "TRUE"; -- prevents inverters merge/absorb into adjacent logic
 
 begin
     -- -----------------------------------------------------------------------
     -- Stage 0 : Enable gate
     -- -----------------------------------------------------------------------
-    stage(0) <= stage(NUM_STAGES) and EN_i;
+    stage(0) <= stage(NUM_STAGES) and EN;
 
     -- -----------------------------------------------------------------------
     -- Stages 1 .. NUM_STAGES : inverter chain
@@ -66,6 +65,6 @@ begin
     -- -----------------------------------------------------------------------
     -- Output tap: take the oscillating signal from the last stage
     -- -----------------------------------------------------------------------
-    CLK_o <= stage(NUM_STAGES);
+    CLK <= stage(NUM_STAGES);
 
 end architecture RTL;

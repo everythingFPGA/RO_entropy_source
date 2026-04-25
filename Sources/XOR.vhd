@@ -33,19 +33,19 @@ entity XOR_1bit is
         N : integer := 8 -- Number of ROs
     );
     port (
-        clk           : in std_logic;                        -- Sampling clock
-        ro_i          : in std_logic_vector(N - 1 downto 0); -- Ring Oscillators
-        entropy_bit_o : out std_logic
+        CLK         : in std_logic;                        -- Sampling clock
+        RO          : in std_logic_vector(N - 1 downto 0); -- Ring Oscillators
+        ENTROPY_BIT : out std_logic
     );
 end XOR_1bit;
 
 architecture Behavioral of XOR_1bit is
     signal ro_sampled : std_logic_vector(N - 1 downto 0);
-    signal xor_r      : std_logic := '0';
+    signal xor_w      : std_logic;
 begin
 
     --------------------------------------------------------------------
-    -- CDC ro_i
+    -- CDC RO
     --------------------------------------------------------------------
     xpm_cdc_array_single_inst : xpm_cdc_array_single
     generic map(
@@ -57,9 +57,9 @@ begin
     )
     port map(
         dest_out => ro_sampled, -- WIDTH-bit output: src_in synchronized to the destination clock domain. This output is registered.
-        dest_clk => clk,        -- 1-bit input: Clock signal for the destination clock domain.
+        dest_clk => CLK,        -- 1-bit input: Clock signal for the destination clock domain.
         src_clk  => '0',        -- 1-bit input: optional; required when SRC_INPUT_REG = 1
-        src_in   => ro_i        -- WIDTH-bit input: Input single-bit array to be synchronized to destination clock domain. It is assumed that each bit of
+        src_in   => RO          -- WIDTH-bit input: Input single-bit array to be synchronized to destination clock domain. It is assumed that each bit of
         -- the array is unrelated to the others. This is reflected in the constraints applied to this macro. To transfer a binary
         -- value losslessly across the two clock domains, use the XPM_CDC_GRAY macro instead.
     );
@@ -74,9 +74,9 @@ begin
         for i in 0 to N - 1 loop
             tmp := tmp xor ro_sampled(i);
         end loop;
-        xor_r <= tmp;
+        xor_w <= tmp;
     end process;
 
-    entropy_bit_o <= xor_r;
+    ENTROPY_BIT <= xor_w;
 
 end Behavioral;
