@@ -1,0 +1,15 @@
+Projects/
+
+Sources/*
+!Sources/*.vhd
+
+Constraints/*
+!Constraints/*.xdc
+
+**.log
+**.rst
+
+**.str
+**.jou
+.Xil/
+.Xilinx/
