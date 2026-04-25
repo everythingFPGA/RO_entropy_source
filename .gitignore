@@ -6,6 +6,8 @@ Sources/*
 Constraints/*
 !Constraints/*.xdc
 
+bin/*
+
 **.log
 **.rst
 
