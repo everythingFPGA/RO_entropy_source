@@ -1,0 +1,4 @@
+Sources/RingOscillator.vhd 93
+Sources/XOR.vhd 93
+Sources/Accumulator.vhd 93
+Sources/TRNG.vhd top=TRNG 93

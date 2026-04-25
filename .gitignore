@@ -1,0 +1,17 @@
+Projects/
+
+Sources/*
+!Sources/*.vhd
+
+Constraints/*
+!Constraints/*.xdc
+
+bin/*
+
+**.log
+**.rst
+
+**.str
+**.jou
+.Xil/
+.Xilinx/
