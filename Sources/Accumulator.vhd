@@ -33,41 +33,40 @@ entity Accumulator is
         SEED_LENGTH : integer := 256
     );
     port (
-        clk        : in std_logic;
-        rst        : in std_logic;
-        entropy_in : in std_logic;
-        seed_ready : out std_logic;
-        seed_out   : out std_logic_vector(SEED_LENGTH - 1 downto 0)
+        CLK        : in std_logic;
+        RST        : in std_logic;
+        ENTROPY_IN : in std_logic;
+        SEED_READY : out std_logic;
+        SEED_OUT   : out std_logic_vector(SEED_LENGTH - 1 downto 0)
     );
 end entity;
 
 architecture Behavioral of Accumulator is
-    constant BUF_LENGTH : integer := 2 * SEED_LENGTH;
-    signal buffer       : std_logic_vector(BUF_LENGTH - 1 downto 0);
-    signal wr_ptr       : integer range 0 to BUF_LENGTH - 1 := 0;
-    signal ready_r      : std_logic                         := '0';
-    signal seed_r       : std_logic_vector(SEED_LENGTH - 1 downto 0);
+    constant C_BUF_LENGTH : integer := 2 * SEED_LENGTH;
+    signal buff_r         : std_logic_vector(C_BUF_LENGTH - 1 downto 0);
+    signal wr_ptr         : integer range 0 to C_BUF_LENGTH - 1 := 0;
+    signal ready_r        : std_logic                           := '0';
+    signal seed_r         : std_logic_vector(SEED_LENGTH - 1 downto 0);
 
 begin
 
-    process (clk)
+    process (CLK)
     begin
-        if rising_edge(clk) then
-            if rst = '1' then
-                buffer  <= (others => '0');
+        if rising_edge(CLK) then
+            if RST = '1' then
+                buff_r  <= (others => '0');
                 wr_ptr  <= 0;
                 ready_r <= '0';
             else
-                buffer(wr_ptr) <= entropy_in;
+                buff_r(wr_ptr) <= ENTROPY_IN;
 
-                if wr_ptr = BUF_LENGTH - 1 then
-                    wr_ptr <= 0;
-                    seed_r <= buffer(BUF_LENGTH - 1 downto SEED_LENGTH);
-                    -- pulse seed_ready
+                if wr_ptr = C_BUF_LENGTH - 1 then
+                    wr_ptr  <= 0;
+                    seed_r  <= ENTROPY_IN & buff_r(C_BUF_LENGTH - 2 downto SEED_LENGTH);
                     ready_r <= '1';
                 elsif wr_ptr = SEED_LENGTH then
-                    seed_r <= buffer(SEED_LENGTH - 1 downto 0);
-                    -- pulse seed_ready
+                    wr_ptr  <= wr_ptr + 1;
+                    seed_r  <= buff_r(SEED_LENGTH - 1 downto 0);
                     ready_r <= '1';
                 else
                     wr_ptr  <= wr_ptr + 1;
@@ -77,7 +76,7 @@ begin
         end if;
     end process;
 
-    seed_out   <= seed_r;
-    seed_ready <= ready_r;
+    SEED_OUT   <= seed_r;
+    SEED_READY <= ready_r;
 
 end architecture;
